@@ -27,6 +27,12 @@
 <button id="submit-btn">Submit</button>
 <div id="results-container" class="hidden"></div>
 
+<!-- Hidden form + iframe for safe submission -->
+<form id="quiz-form" action="https://script.google.com/macros/s/AKfycbw7nzkRWfIfNnLaJ19naJEOBR0PzKl-Qzu6-CtUb64yPS32eKqAGmBs1pkgy0Hy1PwWmQ/exec" method="post" target="hidden_iframe" style="display:none;">
+  <input type="hidden" name="data" id="form-data">
+</form>
+<iframe name="hidden_iframe" style="display:none;"></iframe>
+
 <script>
 const quizData = [
     { question: "What is the capital of Brunei?", answers: { a: "Brunei City", b: "Bandar Seri Begawan", c: "Bujumbura" }, correct: "b" },
@@ -74,25 +80,21 @@ function showResults() {
 
         if (userAnswer === q.correct) {
             score++;
-            answerContainer.parentElement.style.border = "2px solid #16a34a"; // green for correct
+            answerContainer.parentElement.style.border = "2px solid #16a34a"; // green
         } else {
-            answerContainer.parentElement.style.border = "2px solid #dc2626"; // red for wrong
+            answerContainer.parentElement.style.border = "2px solid #dc2626"; // red
         }
     });
 
     submissionData.Score = score;
 
+    // Display results
     resultsContainer.innerHTML = `<h2>You answered ${score} questions out of ${quizData.length} correctly!</h2>`;
     resultsContainer.classList.remove("hidden");
 
-    // Send results to Google Sheet
-    fetch("https://script.google.com/macros/s/AKfycbw7nzkRWfIfNnLaJ19naJEOBR0PzKl-Qzu6-CtUb64yPS32eKqAGmBs1pkgy0Hy1PwWmQ/exec", {
-        method: "POST",
-        body: JSON.stringify(submissionData)
-    })
-    .then(res => res.json())
-    .then(data => console.log("Submission logged:", data))
-    .catch(err => console.error("Error logging submission:", err));
+    // Submit JSON via hidden form
+    document.getElementById("form-data").value = JSON.stringify(submissionData);
+    document.getElementById("quiz-form").submit();
 }
 
 buildQuiz();
@@ -101,4 +103,3 @@ submitButton.addEventListener("click", showResults);
 
 </body>
 </html>
-
