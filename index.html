@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>University Quiz</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  body { font-family: 'Inter', sans-serif; background-color: #f0f2f5; margin: 0; padding: 20px; }
+  h1 { text-align: center; color: #333; margin-bottom: 30px; }
+  #quiz { max-width: 700px; margin: 0 auto; }
+  .question-card { background-color: #fff; border-radius: 12px; padding: 20px; margin-bottom: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.08); transition: transform 0.2s; }
+  .question-card:hover { transform: translateY(-3px); }
+  .question { font-weight: 600; margin-bottom: 15px; color: #222; }
+  .answers label { display: block; margin-bottom: 10px; cursor: pointer; padding: 8px 12px; border-radius: 8px; transition: background-color 0.2s, color 0.2s; }
+  .answers input[type="radio"] { margin-right: 10px; }
+  .answers label:hover { background-color: #e8f0fe; }
+  #submit-btn { display: block; margin: 30px auto; background-color: #4f46e5; color: white; border: none; padding: 12px 30px; border-radius: 10px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: background-color 0.2s; }
+  #submit-btn:hover { background-color: #3730a3; }
+  #results-container { max-width: 700px; margin: 20px auto; font-size: 1.2em; font-weight: 600; text-align: center; }
+</style>
+</head>
+<body>
+
+<h1>University Quiz</h1>
+<div id="quiz"></div>
+<button id="submit-btn">Submit</button>
+<div id="results-container" class="hidden"></div>
+
+<script>
+const quizData = [
+    { question: "What is the capital of Brunei?", answers: { a: "Brunei City", b: "Bandar Seri Begawan", c: "Bujumbura" }, correct: "b" },
+    { question: "Which country does France share the largest border with?", answers: { a: "Brazil", b: "The Netherlands", c: "Samoa" }, correct: "a" },
+    { question: "Which biome covers the largest land area on Earth?", answers: { a: "Boreal forest (Taiga)", b: "Tropical rainforest", c: "Desert" }, correct: "a" }
+];
+
+const quizContainer = document.getElementById("quiz");
+const resultsContainer = document.getElementById("results-container");
+const submitButton = document.getElementById("submit-btn");
+
+function buildQuiz() {
+    const output = [];
+    quizData.forEach((q, index) => {
+        const answers = [];
+        for (let letter in q.answers) {
+            answers.push(
+                `<label>
+                    <input type="radio" name="question${index}" value="${letter}">
+                    ${letter}: ${q.answers[letter]}
+                </label>`
+            );
+        }
+        output.push(
+            `<div class="question-card">
+                <div class="question">${q.question}</div>
+                <div class="answers">${answers.join("")}</div>
+            </div>`
+        );
+    });
+    quizContainer.innerHTML = output.join("");
+}
+
+function showResults() {
+    const answerContainers = quizContainer.querySelectorAll(".answers");
+    let score = 0;
+    const submissionData = {};
+
+    quizData.forEach((q, index) => {
+        const answerContainer = answerContainers[index];
+        const selector = `input[name=question${index}]:checked`;
+        const userAnswer = (answerContainer.querySelector(selector) || {}).value || "";
+
+        submissionData[`Q${index+1}`] = userAnswer;
+
+        if (userAnswer === q.correct) {
+            score++;
+            answerContainer.parentElement.style.border = "2px solid #16a34a"; // green for correct
+        } else {
+            answerContainer.parentElement.style.border = "2px solid #dc2626"; // red for wrong
+        }
+    });
+
+    submissionData.Score = score;
+
+    resultsContainer.innerHTML = `<h2>You answered ${score} questions out of ${quizData.length} correctly!</h2>`;
+    resultsContainer.classList.remove("hidden");
+
+    // Send results to Google Sheet
+    fetch("https://script.google.com/macros/s/AKfycbw7nzkRWfIfNnLaJ19naJEOBR0PzKl-Qzu6-CtUb64yPS32eKqAGmBs1pkgy0Hy1PwWmQ/exec", {
+        method: "POST",
+        body: JSON.stringify(submissionData)
+    })
+    .then(res => res.json())
+    .then(data => console.log("Submission logged:", data))
+    .catch(err => console.error("Error logging submission:", err));
+}
+
+buildQuiz();
+submitButton.addEventListener("click", showResults);
+</script>
+
+</body>
+</html>
