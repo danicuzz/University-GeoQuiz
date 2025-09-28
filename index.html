@@ -19,11 +19,11 @@
             display: flex;
             flex-direction: column;
             min-height: 80vh;
-            box-shadow: 0 4px 12px rgba(0, 128, 0, 0.1);
+            box-shadow: 0 4px 12px rgba(0, 128, 0, 0.15);
         }
         h1 {
             text-align: center;
-            color: #2e7d32; /* dark green */
+            color: #2e7d32;
             margin-bottom: 10px;
         }
         main {
@@ -35,7 +35,7 @@
             gap: 15px;
         }
         .banner {
-            background: #c8e6c9; /* light green card */
+            background: #c8e6c9;
             border-radius: 12px;
             padding: 25px;
             text-align: center;
@@ -43,3 +43,54 @@
             box-shadow: 0 3px 6px rgba(0, 128, 0, 0.15);
             max-width: 90%;
             color: #1b5e20;
+        }
+        .signature {
+            font-size: 1rem;
+            color: #388e3c;
+            text-align: center;
+            margin-top: 10px;
+            font-style: italic;
+        }
+        footer {
+            margin-top: 30px;
+            text-align: center;
+        }
+        .admin-link {
+            font-size: 0.9rem;
+            color: #4caf50;
+            text-decoration: none;
+        }
+        .admin-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Uni Konstanz GeoQuiz</h1>
+        </header>
+
+        <main>
+            <div class="banner">
+                place your text here
+            </div>
+            <div class="signature">
+                Add your signature here
+            </div>
+        </main>
+
+        <footer>
+            <a href="/admin" class="admin-link">Admin-Bereich</a>
+        </footer>
+    </div>
+
+    <!-- ✅ Script moved to the very bottom so DOM is ready -->
+    <script>
+        document.querySelector('.banner').textContent =
+            "Like all nice things, also this quiz must come to an end. I hope you enjoyed it! Please, remove the sticker you're seeing, if you can.";
+        document.querySelector('.signature').textContent =
+            "— Your Quiz Team";
+    </script>
+</body>
+</html>
