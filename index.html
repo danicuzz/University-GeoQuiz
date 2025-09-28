@@ -1,119 +1,74 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="de">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Uni Konstanz GeoQuiz</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
-<style>
-  body { font-family: 'Inter', sans-serif; background-color: #f0f2f5; margin: 0; padding: 20px; }
-  h1 { text-align: center; color: #333; margin-bottom: 30px; }
-  #quiz { max-width: 700px; margin: 0 auto; }
-  .question-card { background-color: #fff; border-radius: 12px; padding: 20px; margin-bottom: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.08); transition: transform 0.2s; }
-  .question-card:hover { transform: translateY(-3px); }
-  .question { font-weight: 600; margin-bottom: 15px; color: #222; }
-  .answers label { display: block; margin-bottom: 10px; cursor: pointer; padding: 8px 12px; border-radius: 8px; transition: background-color 0.2s, color 0.2s; }
-  .answers input[type="radio"] { margin-right: 10px; }
-  .answers label:hover { background-color: #e8f0fe; }
-  #submit-btn { display: block; margin: 30px auto; background-color: #4f46e5; color: white; border: none; padding: 12px 30px; border-radius: 10px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: background-color 0.2s; }
-  #submit-btn:hover { background-color: #3730a3; }
-  #results-container { max-width: 700px; margin: 20px auto; font-size: 1.2em; font-weight: 600; text-align: center; }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Uni Konstanz GeoQuiz</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f5f5f5;
+            margin: 0;
+        }
+        .container {
+            max-width: 700px;
+            margin: 40px auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            min-height: 80vh; /* keeps box tall enough to center nicely */
+        }
+        h1 {
+            text-align: center;
+        }
+        main {
+            flex: 1; /* takes available vertical space */
+            display: flex;
+            justify-content: center;
+            align-items: center; /* vertical centering */
+        }
+        .banner {
+            background: #f8f8f8;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            font-size: 1.2rem;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+            max-width: 90%;
+        }
+        footer {
+            margin-top: 40px;
+            text-align: center;
+        }
+        .admin-link {
+            font-size: 0.9rem;
+            color: #666;
+        }
+    </style>
 </head>
 <body>
+    <div class="container">
+        <header>
+            <h1>Das Klo-Quiz</h1>
+        </header>
 
-<h1>Uni Konstanz GeoQuiz - Week 39 of 2025</h1>
-<div id="quiz"></div>
-<button id="submit-btn">Submit</button>
-<div id="results-container" class="hidden"></div>
+        <main>
+            <div class="banner">
+                <!-- Default text, will be replaced by script -->
+                place your text here
+            </div>
+        </main>
 
-<!-- Hidden form + iframe for safe submission -->
-<form id="quiz-form" action="https://script.google.com/macros/s/AKfycbw7nzkRWfIfNnLaJ19naJEOBR0PzKl-Qzu6-CtUb64yPS32eKqAGmBs1pkgy0Hy1PwWmQ/exec" method="post" target="hidden_iframe" style="display:none;">
-  <input type="hidden" name="data" id="form-data">
-</form>
-<iframe name="hidden_iframe" style="display:none;"></iframe>
+        <footer>
+            <a href="/admin" class="admin-link">Admin-Bereich</a>
+        </footer>
+    </div>
 
-<script>
-const quizData = [
-    { question: "Which of the Aeolian Islands is famous for a volcano that regularly shoots glowing lava fountains high into the air, earning it the nickname “Lighthouse of the Mediterranean”?", answers: { a: "Vulcano", b: "Lipari", c: "Stromboli" }, correct: "c" },
-    { question: "Which tiny fishing village in Norway has a name that’s literally just one letter?", answers: { a: "Å", b: "Ø", c: "Ä" }, correct: "a" },
-    { question: "South Africa has 11 official languages. Which of these sets contains only official languages of the country?", answers: { a: "Swahili, Tswana, English", b: "Zulu, Afrikaans, Xhosa", c: "French, Ndebele, Sepedi" }, correct: "b" }
-];
-
-const quizContainer = document.getElementById("quiz");
-const resultsContainer = document.getElementById("results-container");
-const submitButton = document.getElementById("submit-btn");
-
-function buildQuiz() {
-    const output = [];
-    quizData.forEach((q, index) => {
-        const answers = [];
-        for (let letter in q.answers) {
-            answers.push(
-                `<label>
-                    <input type="radio" name="question${index}" value="${letter}">
-                    ${letter}: ${q.answers[letter]}
-                </label>`
-            );
-        }
-        output.push(
-            `<div class="question-card">
-                <div class="question">${q.question}</div>
-                <div class="answers">${answers.join("")}</div>
-            </div>`
-        );
-    });
-    quizContainer.innerHTML = output.join("");
-}
-
-function showResults() {
-    const answerContainers = quizContainer.querySelectorAll(".answers");
-    let score = 0;
-    const submissionData = {};
-
-    quizData.forEach((q, index) => {
-        const answerContainer = answerContainers[index];
-        const selector = `input[name=question${index}]:checked`;
-        const userAnswer = (answerContainer.querySelector(selector) || {}).value || "";
-
-        submissionData[`Q${index+1}`] = userAnswer;
-
-        if (userAnswer === q.correct) {
-            score++;
-            answerContainer.parentElement.style.border = "2px solid #16a34a"; // green
-        } else {
-            answerContainer.parentElement.style.border = "2px solid #dc2626"; // red
-        }
-    });
-
-    submissionData.Score = score;
-
-    // Display results
-    resultsContainer.innerHTML = `<h2>You answered ${score} questions out of ${quizData.length} correctly!</h2>`;
-    resultsContainer.classList.remove("hidden");
-
-    // Submit JSON via hidden form
-    document.getElementById("form-data").value = JSON.stringify(submissionData);
-    document.getElementById("quiz-form").submit();
-}
-
-buildQuiz();
-submitButton.addEventListener("click", showResults);
-</script>
-
+    <script>
+        // Change this text whenever you want to update the banner
+        document.querySelector('.banner').textContent = "Das Quiz ist beendet – danke fürs Mitmachen!";
+    </script>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
