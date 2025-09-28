@@ -51,6 +51,15 @@
             margin-top: 10px;
             font-style: italic;
         }
+        .initials-box {
+            background: #e0f2f1;
+            border-radius: 8px;
+            padding: 6px 12px;
+            font-size: 0.9rem;
+            color: #004d40;
+            margin-top: 5px;
+            box-shadow: 0 2px 4px rgba(0, 128, 0, 0.1);
+        }
         footer {
             margin-top: 30px;
             text-align: center;
@@ -78,16 +87,19 @@
             <div class="signature">
                 Add your signature here
             </div>
+            <div class="initials-box">
+                Your initials here
+            </div>
         </main>
 
-    <!-- ✅ Script moved to the very bottom so DOM is ready -->
+    
     <script>
         document.querySelector('.banner').textContent =
-            "Like all good things, also this quiz must come to an end. I hope you enjoyed it!";
+            "Like all good things, also this quiz must come to an end. Thank you for playing along, I hope you enjoyed it!";
         document.querySelector('.signature').textContent =
             "— Please, remove the sticker you're seeing, if you can.";
+        document.querySelector('.initials-box').textContent =
+            "DC";
     </script>
 </body>
 </html>
-
-
